@@ -1,0 +1,17 @@
+bot:
+  name: qqqMaoBot
+  token: 7190126740:AAFdTc28e4MszuZu0_fHegMndUfC-J3q2Mc
+  uri:  https://f0e1-185-122-29-71.ngrok-free.app
+
+server:
+  port: 8084
+  ssl:
+    enabled:
+      false
+
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: userok
+    password: p@ssw0rd

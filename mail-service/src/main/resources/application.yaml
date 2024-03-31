@@ -1,0 +1,16 @@
+server:
+  port: 8087
+
+spring:
+  mail:
+    host: smtp.mail.ru
+    port: 465
+    protocol: smtps
+    username: qqmaobot@mail.ru
+    password: b0XinzG6qwCnrGcb1NaF
+
+
+
+service:
+  activation:
+    uri: http://127.0.0.1:8086/user/activation?id={id}
