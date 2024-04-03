@@ -19,6 +19,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
+import javax.transaction.Transactional;
+
 import static org.example.entity.enums.UserState.BASIC_STATE;
 import static org.example.entity.enums.UserState.WAIT_FOR_EMAIL_STATE;
 import static org.example.service.enums.ServiceCommands.*;
@@ -40,6 +42,7 @@ public class MainServiceImpl implements MainService {
         this.appUserService = appUserService;
     }
 
+    @Transactional
     @Override
     public void processTextMessage(Update update) {
         saveRawData(update);

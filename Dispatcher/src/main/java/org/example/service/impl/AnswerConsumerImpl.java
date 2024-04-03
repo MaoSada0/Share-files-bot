@@ -6,7 +6,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
-import static org.example.model.RabbitQueue.ANSWER_MESSAGE;
 
 @Service
 public class AnswerConsumerImpl implements AnswerConsumer {
@@ -17,7 +16,7 @@ public class AnswerConsumerImpl implements AnswerConsumer {
     }
 
     @Override
-    @RabbitListener(queues = ANSWER_MESSAGE)
+    @RabbitListener(queues = "${spring.rabbitmq.queues.answer-message}")
     public void consume(SendMessage sendMessage) {
         updateProcessor.setView(sendMessage);
     }

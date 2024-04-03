@@ -4,9 +4,9 @@ import lombok.extern.log4j.Log4j;
 import org.example.dao.AppUserDAO;
 import org.example.dto.MailParams;
 import org.example.entity.AppUser;
-import org.example.entity.enums.UserState;
 import org.example.service.AppUserService;
 import org.example.utils.CryptoTool;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -24,12 +24,15 @@ public class AppUserServiceImpl implements AppUserService {
     private final AppUserDAO appUserDAO;
     private final CryptoTool cryptoTool;
 
-    @Value("${service.mail.uri}")
-    private String mailServiceUri;
+    @Value("${spring.rabbitmq.queues.registration-mail}")
+    private String registrationMailQueue;
 
-    public AppUserServiceImpl(AppUserDAO appUserDAO, CryptoTool cryptoTool) {
+    private final RabbitTemplate rabbitTemplate;
+
+    public AppUserServiceImpl(AppUserDAO appUserDAO, CryptoTool cryptoTool, RabbitTemplate rabbitTemplate) {
         this.appUserDAO = appUserDAO;
         this.cryptoTool = cryptoTool;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @Override
@@ -54,43 +57,28 @@ public class AppUserServiceImpl implements AppUserService {
             return "Введите, пожалуйста, корректный email! /cancel";
         }
 
-        var optional = appUserDAO.findByEmail(email);
-        if(optional.isEmpty()){
+        var appUserOpt = appUserDAO.findByEmail(email);
+
+        if(appUserOpt.isEmpty()){
             appUser.setEmail(email);
             appUser.setState(BASIC_STATE);
             appUser = appUserDAO.save(appUser);
 
             var cryptoUserId = cryptoTool.hashOf(appUser.getId());
-            var response = sendRequestToMailService(cryptoUserId, email);
-            if (response.getStatusCode() != HttpStatus.OK){
-                var msg = "Отправка на " + email +" не удалась :(";
-                log.error(msg);
-                appUser.setEmail(null);
-                appUserDAO.save(appUser);
-                return msg;
-            }
-
+            sendRequestToMailService(cryptoUserId, email);
             return "Вам на почту было отправлено письмо. Перейдите по ссылке в письме для подтверждения регистрации";
         }else {
             return "Этот email уже используется /cancel";
         }
     }
 
-    private ResponseEntity<String> sendRequestToMailService(String cryptoUserId, String email) {
-        var restTemplate = new RestTemplate();
-        var headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+    private void sendRequestToMailService(String cryptoUserId, String email) {
 
         var mailParams = MailParams.builder()
                 .id(cryptoUserId)
                 .emailTo(email)
                 .build();
 
-        var request = new HttpEntity<>(mailParams, headers);
-
-        return restTemplate.exchange(mailServiceUri,
-                HttpMethod.POST,
-                request,
-                String.class);
+        rabbitTemplate.convertAndSend(registrationMailQueue, mailParams);
     }
 }

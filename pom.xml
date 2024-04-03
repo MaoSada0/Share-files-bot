@@ -10,7 +10,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>Dispatcher</module>
-        <module>CommonRabbitmq</module>
         <module>node</module>
         <module>common-jpa</module>
         <module>rest-service</module>

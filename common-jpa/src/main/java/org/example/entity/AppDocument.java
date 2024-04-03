@@ -14,12 +14,12 @@ import javax.persistence.*;
 @Entity
 @Table(name = "app_document")
 public class AppDocument {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String telegramFileId;
+
     private String docName;
 
     @OneToOne

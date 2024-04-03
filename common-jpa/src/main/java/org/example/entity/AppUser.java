@@ -8,7 +8,7 @@ import org.hibernate.annotations.TypeDef;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-//@Data
+
 @Getter
 @Setter
 @EqualsAndHashCode(exclude = "id")
