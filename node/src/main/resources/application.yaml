@@ -22,7 +22,7 @@ spring:
     generate-ddl: true
 
 
-token: 7190126740:AAFdTc28e4MszuZu0_fHegMndUfC-J3q2Mc
+token: 
 
 service:
   file_info:
