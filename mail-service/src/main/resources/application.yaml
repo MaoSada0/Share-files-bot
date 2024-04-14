@@ -6,8 +6,8 @@ spring:
     host: smtp.mail.ru
     port: 465
     protocol: smtps
-    username: qqmaobot@mail.ru
-    password: b0XinzG6qwCnrGcb1NaF
+    username: 
+    password:
   rabbitmq:
     host: localhost
     port: 5672
